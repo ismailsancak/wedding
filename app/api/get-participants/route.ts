@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UTApi } from 'uploadthing/server';
 
+export const dynamic = 'force-dynamic';
+
 const utapi = new UTApi();
 
 export async function GET(request: NextRequest) {
