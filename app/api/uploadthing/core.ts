@@ -1,8 +1,13 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError, UTApi } from "uploadthing/server";
+import { UTApi, UploadThingError } from "uploadthing/server";
 
 const f = createUploadthing();
 const utapi = new UTApi();
+
+// DEBUG: env variable kontrolü
+console.log("🔑 UPLOADTHING_APP_ID:", process.env.UPLOADTHING_APP_ID ? `SET (${process.env.UPLOADTHING_APP_ID})` : "❌ NOT SET");
+console.log("🔑 UPLOADTHING_SECRET:", process.env.UPLOADTHING_SECRET ? `SET (${process.env.UPLOADTHING_SECRET.substring(0, 10)}...)` : "❌ NOT SET");
+
 
 // FileRouter for your app, kimlik doğrulama YOK
 export const ourFileRouter = {
