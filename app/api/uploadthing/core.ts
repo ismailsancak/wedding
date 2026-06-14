@@ -2,34 +2,7 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
 
 const f = createUploadthing();
-// Lazy initialize UTApi to prevent build-time crashes when UPLOADTHING_SECRET/TOKEN is missing.
-let utapiInstance: UTApi | null = null;
-const getUtapi = () => {
-  if (!utapiInstance) {
-    let secret = process.env.UPLOADTHING_SECRET;
-    let token = process.env.UPLOADTHING_TOKEN;
-
-    if (secret && !secret.startsWith('sk_') && secret.startsWith('eyJ')) {
-      token = secret;
-    }
-
-    if (token) {
-      try {
-        const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
-        if (decoded.apiKey) {
-          process.env.UPLOADTHING_SECRET = decoded.apiKey;
-        }
-        if (decoded.appId) {
-          process.env.UPLOADTHING_APP_ID = decoded.appId;
-        }
-      } catch (e) {
-        console.error("UploadThing token parse hatası:", e);
-      }
-    }
-    utapiInstance = new UTApi();
-  }
-  return utapiInstance;
-};
+const utapi = new UTApi();
 
 // FileRouter for your app, kimlik doğrulama YOK
 export const ourFileRouter = {
@@ -63,7 +36,7 @@ export const ourFileRouter = {
           console.log('📋 Katılımcı listesi güncelleniyor...');
           
           // Mevcut tüm dosyaları al
-          const filesResponse = await getUtapi().listFiles();
+          const filesResponse = await utapi.listFiles();
           console.log('📂 ListFiles response:', filesResponse);
           console.log('📂 Response type:', typeof filesResponse);
           
@@ -107,7 +80,7 @@ export const ourFileRouter = {
               const fileKeysToDelete = oldFiles.map(f => f.key).filter(key => key); // undefined key'leri filtrele
               
               if (fileKeysToDelete.length > 0) {
-                const deleteResult = await getUtapi().deleteFiles(fileKeysToDelete);
+                const deleteResult = await utapi.deleteFiles(fileKeysToDelete);
                 console.log('🗑️ Silme işlemi sonucu:', deleteResult);
                 console.log('📋 Eski dosyalar başarıyla silindi');
               } else {
