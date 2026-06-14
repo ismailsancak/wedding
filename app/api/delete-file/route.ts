@@ -15,12 +15,22 @@ export async function POST(request: NextRequest) {
 
     console.log('🗑️ Dosya siliniyor:', fileKey);
 
+    let apiKey = process.env.UPLOADTHING_SECRET;
+    if (process.env.UPLOADTHING_TOKEN) {
+      try {
+        const decoded = JSON.parse(Buffer.from(process.env.UPLOADTHING_TOKEN, 'base64').toString('utf-8'));
+        apiKey = decoded.apiKey;
+      } catch (e) {
+        console.error("UploadThing token parse hatası:", e);
+      }
+    }
+
     // UploadThing'den dosyayı sil
     const response = await fetch('https://api.uploadthing.com/v6/deleteFiles', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Uploadthing-Api-Key': process.env.UPLOADTHING_SECRET!,
+        'X-Uploadthing-Api-Key': apiKey || '',
       },
       body: JSON.stringify({
         fileKeys: [fileKey]
