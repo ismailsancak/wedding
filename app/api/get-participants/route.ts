@@ -1,36 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UTApi } from 'uploadthing/server';
 
-export const dynamic = 'force-dynamic';
-
-// Lazy initialize UTApi to prevent build-time crashes when UPLOADTHING_SECRET/TOKEN is missing.
-let utapiInstance: UTApi | null = null;
-const getUtapi = () => {
-  if (!utapiInstance) {
-    let secret = process.env.UPLOADTHING_SECRET;
-    let token = process.env.UPLOADTHING_TOKEN;
-
-    if (secret && !secret.startsWith('sk_') && secret.startsWith('eyJ')) {
-      token = secret;
-    }
-
-    if (token) {
-      try {
-        const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
-        if (decoded.apiKey) {
-          process.env.UPLOADTHING_SECRET = decoded.apiKey;
-        }
-        if (decoded.appId) {
-          process.env.UPLOADTHING_APP_ID = decoded.appId;
-        }
-      } catch (e) {
-        console.error("UploadThing token parse hatası:", e);
-      }
-    }
-    utapiInstance = new UTApi();
-  }
-  return utapiInstance;
-};
+const utapi = new UTApi();
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,7 +15,7 @@ export async function GET(request: NextRequest) {
     };
     
     // UploadThing'den tüm dosyaları al
-    const filesResponse = await getUtapi().listFiles({
+    const filesResponse = await utapi.listFiles({
       limit: 1000, // Limit ekle
     });
     
