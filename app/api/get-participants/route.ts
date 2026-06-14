@@ -7,9 +7,16 @@ export const dynamic = 'force-dynamic';
 let utapiInstance: UTApi | null = null;
 const getUtapi = () => {
   if (!utapiInstance) {
-    if (process.env.UPLOADTHING_TOKEN && !process.env.UPLOADTHING_SECRET) {
+    let secret = process.env.UPLOADTHING_SECRET;
+    let token = process.env.UPLOADTHING_TOKEN;
+
+    if (secret && !secret.startsWith('sk_') && secret.startsWith('eyJ')) {
+      token = secret;
+    }
+
+    if (token) {
       try {
-        const decoded = JSON.parse(Buffer.from(process.env.UPLOADTHING_TOKEN, 'base64').toString('utf-8'));
+        const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
         if (decoded.apiKey) {
           process.env.UPLOADTHING_SECRET = decoded.apiKey;
         }
