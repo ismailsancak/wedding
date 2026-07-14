@@ -667,7 +667,7 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
       setSelectedFiles(prev => [...prev, ...fileArray]);
 
       fileArray.forEach(file => {
-        if (file.type.startsWith('image/')) {
+        if (isImageFile(file)) {
           const url = URL.createObjectURL(file);
           setFileUrls(prev => new Map(prev).set(file, url));
         }
@@ -699,12 +699,17 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
 
       const renamedFiles = selectedFiles.map(file => {
         const sanitizedName = userName.trim().replace(/[^a-zA-Z0-9çğıöşüÇĞIİÖŞÜ\s]/g, '').replace(/\s+/g, '_');
-        const fileExtension = file.name.split('.').pop();
-        const originalFileName = file.name.replace(`.${fileExtension}`, '');
-        const newFileName = `${sanitizedName}_f_${originalFileName}.${fileExtension}`;
+        const ext = getFileExtension(file);
+        // Uzantı varsa dosya adından çıkar, yoksa tüm adı kullan
+        const originalFileName = file.name.includes('.')
+          ? file.name.substring(0, file.name.lastIndexOf('.'))
+          : file.name || 'photo';
+        const newFileName = `${sanitizedName}_f_${originalFileName}.${ext}`;
+        // Android'de file.type boş gelebilir, MIME type'ı da garantiye al
+        const mimeType = file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`;
 
         return new File([file], newFileName, {
-          type: file.type,
+          type: mimeType,
           lastModified: file.lastModified,
         });
       });
