@@ -920,7 +920,7 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
     </div>
   );
 
-  const EventCard = ({ event, timeLeft, isPassed }: { event: typeof NIKAH_EVENT | typeof DUGUN_EVENT; timeLeft: { days: number; hours: number; minutes: number; seconds: number }; isPassed: boolean }) => (
+  const EventCard = ({ event, timeLeft, isPassed }: { event: typeof DUGUN_EVENT; timeLeft: { days: number; hours: number; minutes: number; seconds: number }; isPassed: boolean }) => (
     <div className="event-card mb-4" style={{ animationDelay: event.type === 'dugun' ? '0.2s' : '0s' }}>
       <div className="text-center mb-4">
         <span className="text-3xl mb-2 block">{event.icon}</span>
