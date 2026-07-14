@@ -700,13 +700,24 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
       const renamedFiles = selectedFiles.map(file => {
         const sanitizedName = userName.trim().replace(/[^a-zA-Z0-9çğıöşüÇĞIİÖŞÜ\s]/g, '').replace(/\s+/g, '_');
         const ext = getFileExtension(file);
-        // Uzantı varsa dosya adından çıkar, yoksa tüm adı kullan
         const originalFileName = file.name.includes('.')
           ? file.name.substring(0, file.name.lastIndexOf('.'))
           : file.name || 'photo';
         const newFileName = `${sanitizedName}_f_${originalFileName}.${ext}`;
-        // Android'de file.type boş gelebilir, MIME type'ı da garantiye al
-        const mimeType = file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`;
+
+        // Android'de file.type boş ("") gelebilir — uzantıdan MIME type belirle
+        let mimeType = file.type;
+        if (!mimeType) {
+          const videoExts = ['mp4', 'mov', 'avi', 'webm', '3gp', 'mkv'];
+          const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'avif'];
+          if (videoExts.includes(ext)) {
+            mimeType = ext === 'mov' ? 'video/quicktime' : `video/${ext}`;
+          } else if (imageExts.includes(ext)) {
+            mimeType = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`;
+          } else {
+            mimeType = 'application/octet-stream';
+          }
+        }
 
         return new File([file], newFileName, {
           type: mimeType,
@@ -1242,7 +1253,6 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
             ref={fileInputRef}
             type="file"
             multiple
-            accept="image/*,video/*,.heic,.heif,.mov,.mp4,.jpeg,.jpg,.png,.gif,.webp,.avif"
             onChange={handleFileSelect}
             className="hidden"
           />
