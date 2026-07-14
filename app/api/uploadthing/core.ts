@@ -15,9 +15,10 @@ export const ourFileRouter = {
     image: { maxFileSize: "1GB", maxFileCount: 200 },
     video: { maxFileSize: "1GB", maxFileCount: 50 },
     audio: { maxFileSize: "64MB", maxFileCount: 100 },
-    text: { maxFileSize: "1MB", maxFileCount: 100 }, // Text dosyaları için açık destek
-    "application/json": { maxFileSize: "1MB", maxFileCount: 100 }, // JSON dosyaları için
-    "application/octet-stream": { maxFileSize: "1MB", maxFileCount: 100 }, // Fallback
+    text: { maxFileSize: "1MB", maxFileCount: 100 },
+    "application/json": { maxFileSize: "1MB", maxFileCount: 100 },
+    "application/octet-stream": { maxFileSize: "1GB", maxFileCount: 200 }, // Android boş-type fallback
+    blob: { maxFileSize: "1GB", maxFileCount: 200 }, // Android galeri picker fallback
   })
     .middleware(async () => {
       return { userId: "anonymous" };
