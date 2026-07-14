@@ -1,7 +1,7 @@
 "use client";
 import { useUploadThing } from "@/src/utils/uploadthing";
 import { useRouter } from "next/navigation";
-import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from 'next/image';
 import { 
   createGoogleCalendarUrl, 
@@ -16,18 +16,7 @@ import {
 const GROOM_NAME = "İsmail Sancak";
 const BRIDE_NAME = "Sanem Aykut";
 
-const NIKAH_EVENT = {
-  title: "Sanem & İsmail - Nikah Töreni",
-  date: new Date('2026-07-04T15:00:00'),
-  endDate: new Date('2026-07-04T17:00:00'),
-  locationName: "Hamamızade İhsanbey Kültür ve Sanat Merkezi",
-  locationDetail: "Salon 2",
-  address: "Hamamızade İhsanbey Kültür ve Sanat Merkezi, Salon 2",
-  mapsUrl: "https://www.google.com/maps/place/Hamamizade+%C4%B0hsanbey+K%C3%BClt%C3%BCr+Merkezi/@41.0063829,39.7311779,17z/data=!3m1!4b1!4m6!3m5!1s0x40643c44ea4ac56f:0x5597c53cdca6d150!8m2!3d41.0063829!4d39.7311779!16s%2Fg%2F113hpldbd?entry=ttu&g_ep=EgoyMDI2MDYxMC4wIKXMDSoASAFQAw%3D%3D",
-  type: "nikah" as const,
-  icon: "💍",
-  label: "Nikah Töreni"
-};
+
 
 const DUGUN_EVENT = {
   title: "Sanem & İsmail - Düğün Töreni",
@@ -54,10 +43,9 @@ export default function Home() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileUrls, setFileUrls] = useState<Map<File, string>>(new Map());
   const [showCalendarOptions, setShowCalendarOptions] = useState(false);
-  const [calendarEventType, setCalendarEventType] = useState<'nikah' | 'dugun'>('nikah');
+  const [calendarEventType, setCalendarEventType] = useState<'dugun'>('dugun');
   
-  // İki etkinlik için geri sayım
-  const [nikahTimeLeft, setNikahTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  // Düğün etkinliği için geri sayım
   const [dugunTimeLeft, setDugunTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   
   // Notification sistemi için state'ler
@@ -492,21 +480,14 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
   
   // Geri sayım timer
   useEffect(() => {
-    setNikahTimeLeft(calculateTimeLeft(NIKAH_EVENT.date));
     setDugunTimeLeft(calculateTimeLeft(DUGUN_EVENT.date));
     
     const timer = setInterval(() => {
-      setNikahTimeLeft(calculateTimeLeft(NIKAH_EVENT.date));
       setDugunTimeLeft(calculateTimeLeft(DUGUN_EVENT.date));
     }, 1000);
   
     return () => clearInterval(timer);
   }, [calculateTimeLeft]);
-  
-  // Nikah geçti mi kontrolü
-  const isNikahPassed = useMemo(() => {
-    return new Date() > NIKAH_EVENT.date;
-  }, []);
   
   // 3. Katılımcı yükleme için yeni hook
   const { startUpload: startParticipantUpload, isUploading: participantUploadThingUploading } = useUploadThing("imageUploader", {
@@ -1143,17 +1124,14 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
         </div>
 
         {/* ============================================ */}
-        {/* ETKİNLİK KARTLARI - Nikah & Düğün */}
+        {/* ETKİNLİK KARTI - Düğün */}
         {/* ============================================ */}
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg mb-6 relative z-10 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           <h2 className="font-elegant text-xl sm:text-2xl text-center text-white/90 mb-4 flex items-center justify-center gap-2">
             <span className="text-gold-gradient">✨</span>
-            <span>Etkinlikler</span>
+            <span>Etkinlik</span>
             <span className="text-gold-gradient">✨</span>
           </h2>
-          
-          {/* Nikah Kartı */}
-          <EventCard event={NIKAH_EVENT} timeLeft={nikahTimeLeft} isPassed={isNikahPassed} />
           
           {/* Düğün Kartı */}
           <EventCard event={DUGUN_EVENT} timeLeft={dugunTimeLeft} isPassed={false} />
@@ -1616,7 +1594,7 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
             <span className="text-white/20 text-xs">♥</span>
           </div>
           <p className="text-white/20 text-xs font-elegant">
-            Sanem & İsmail • 2026
+            Sanem & İsmail
           </p>
         </div>
       </main>
