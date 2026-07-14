@@ -1,7 +1,7 @@
 "use client";
 import { useUploadThing } from "@/src/utils/uploadthing";
 import { useRouter } from "next/navigation";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import Image from 'next/image';
 import {
   createGoogleCalendarUrl,
