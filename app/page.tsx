@@ -966,7 +966,7 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
           <span>Haritada Göster</span>
         </button>
         <button
-          onClick={() => handleAddToCalendar(event.type)}
+          onClick={() => handleAddToCalendar()}
           className="flex-1 btn-rose text-xs sm:text-sm py-2.5 px-3 flex items-center justify-center gap-1.5"
         >
           <span>📅</span>
