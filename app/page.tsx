@@ -583,6 +583,38 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
     },
   });
 
+  const getFileExtension = (file: File): string => {
+    // Önce dosya adından uzantıyı dene
+    const nameParts = file.name.split('.');
+    if (nameParts.length > 1) {
+      const ext = nameParts.pop()!.toLowerCase();
+      if (ext && ext.length <= 5) return ext;
+    }
+    // Dosya adında uzantı yoksa MIME type'tan çıkar
+    const mimeMap: Record<string, string> = {
+      'image/jpeg': 'jpg',
+      'image/jpg': 'jpg',
+      'image/png': 'png',
+      'image/gif': 'gif',
+      'image/webp': 'webp',
+      'image/heic': 'heic',
+      'image/heif': 'heif',
+      'image/avif': 'avif',
+      'video/mp4': 'mp4',
+      'video/quicktime': 'mov',
+      'video/x-msvideo': 'avi',
+      'video/webm': 'webm',
+    };
+    return mimeMap[file.type] || 'jpg';
+  };
+
+  const isImageFile = (file: File): boolean => {
+    if (file.type.startsWith('image/')) return true;
+    // type boş gelebilir (Android content URI), uzantıya bak
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'avif'].includes(ext || '');
+  };
+
   // Dosya seçimi fonksiyonları
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -591,7 +623,7 @@ ${BRIDE_NAME} & ${GROOM_NAME}`;
       setSelectedFiles(prev => [...prev, ...fileArray]);
 
       fileArray.forEach(file => {
-        if (file.type.startsWith('image/')) {
+        if (isImageFile(file)) {
           const url = URL.createObjectURL(file);
           setFileUrls(prev => new Map(prev).set(file, url));
         }
