@@ -15,8 +15,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Sanem & İsmail - Nikah & Düğün",
-  description: "Sanem Aykut & İsmail Sancak Nikah ve Düğün Töreni - 2026",
+  title: "Sanem & İsmail - Düğün Töreni",
+  description: "Sanem Aykut & İsmail Sancak Düğün Töreni - 2026",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
